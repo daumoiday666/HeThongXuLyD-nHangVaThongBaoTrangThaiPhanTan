@@ -307,3 +307,6 @@ override.tf.json
 *_override.tf.json
 .terraformrc
 terraform.rc
+# Cline AI rules and ignore
+.clinerules
+.clineignore
