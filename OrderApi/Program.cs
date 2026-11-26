@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using OrderApi.Data;
 using OrderApi.Models;
+using OrderApi.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -10,6 +11,8 @@ builder.Services.AddOpenApi();
 
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+builder.Services.AddSingleton<RabbitMqProducer>();
 
 var app = builder.Build();
 
@@ -28,7 +31,7 @@ app.MapGet("/orders", async (AppDbContext dbContext) =>
 })
 .WithName("GetOrders");
 
-app.MapPost("/orders", async (CreateOrderRequest request, AppDbContext dbContext) =>
+app.MapPost("/orders", async (CreateOrderRequest request, AppDbContext dbContext, RabbitMqProducer rabbitMqProducer) =>
 {
     var order = new Order
     {
@@ -42,6 +45,8 @@ app.MapPost("/orders", async (CreateOrderRequest request, AppDbContext dbContext
 
     dbContext.Orders.Add(order);
     await dbContext.SaveChangesAsync();
+
+    rabbitMqProducer.PublishMessage("order_queue", order.Id.ToString());
 
     return Results.Created($"/orders/{order.Id}", order);
 })
