@@ -27,10 +27,10 @@ Xây dựng hệ thống xử lý đơn hàng theo kiến trúc Microservices s�
   - Tạo model `Order` và `AppDbContext`.
   - Kết nối thành công tới Database PostgreSQL (đã chạy migration tạo bảng `Orders`).
   - Viết thành công API `GET /orders` (lấy danh sách) và `POST /orders` (tạo đơn hàng mới với trạng thái mặc định là `Pending`).
+- [x] **OrderApi:** Tích hợp RabbitMQ để bắn message (chứa OrderId) vào queue `order_queue` khi có đơn hàng mới.
+- [x] **OrderWorker:** Viết BackgroundService lắng nghe queue, cập nhật trạng thái đơn hàng (`Pending -> Processing -> Completed`) và phát sự kiện.
 
 ### ⏳ Đang thực hiện / Chưa làm
-- [ ] **OrderApi:** Tích hợp RabbitMQ để bắn message (chứa OrderId) vào queue `order_queue` khi có đơn hàng mới.
-- [ ] **OrderWorker:** Viết BackgroundService lắng nghe queue, cập nhật trạng thái đơn hàng (`Pending -> Processing -> Completed`) và phát sự kiện.
 - [ ] **NotificationService:** Tích hợp SignalR và lắng nghe RabbitMQ để gửi thông báo real-time về Client.
 - [ ] **Docker hóa:** Viết `Dockerfile` cho 3 service .NET và cấu hình mạng nội bộ trong `docker-compose.yml`.
 - [ ] Viết tài liệu hướng dẫn chạy hệ thống chi tiết.
